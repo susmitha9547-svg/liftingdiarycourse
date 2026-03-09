@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 import { auth } from "@clerk/nextjs/server";
-import { createWorkout } from "@/data/workouts";
+import { updateWorkout } from "@/data/workouts";
 import { revalidatePath } from "next/cache";
 
 const setSchema = z.object({
@@ -16,23 +16,30 @@ const exerciseSchema = z.object({
   sets: z.array(setSchema).min(1),
 });
 
-const logWorkoutSchema = z.object({
+const updateWorkoutSchema = z.object({
+  workoutId: z.string().uuid(),
   name: z.string().min(1).max(100),
   startedAt: z.coerce.date(),
   completedAt: z.coerce.date(),
   exercises: z.array(exerciseSchema).min(1),
 });
 
-type LogWorkoutInput = z.infer<typeof logWorkoutSchema>;
+export type UpdateWorkoutInput = z.infer<typeof updateWorkoutSchema>;
 
-export async function logWorkout(input: LogWorkoutInput) {
-  const parsed = logWorkoutSchema.safeParse(input);
+export async function updateWorkoutAction(input: UpdateWorkoutInput) {
+  const parsed = updateWorkoutSchema.safeParse(input);
   if (!parsed.success) throw new Error("Invalid input");
 
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthenticated");
 
-  await createWorkout(userId, parsed.data);
+  await updateWorkout(userId, parsed.data.workoutId, {
+    name: parsed.data.name,
+    startedAt: parsed.data.startedAt,
+    completedAt: parsed.data.completedAt,
+    exercises: parsed.data.exercises,
+  });
 
   revalidatePath("/dashboard");
+  revalidatePath(`/dashboard/workout/${parsed.data.workoutId}`);
 }

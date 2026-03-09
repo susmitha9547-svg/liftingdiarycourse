@@ -28,4 +28,8 @@ All components default to React Server Components unless `"use client"` is decla
 **IMPORTANT:** Before generating any code, always check the `/docs` directory for relevant documentation files. If a docs file exists for the feature or area you are working on, you MUST read and follow it before writing any code. The `/docs` directory contains project-specific requirements, conventions, and design decisions that take precedence over general best practices.
 
 - /docs/ui.md
-- /docs/data-fetching.md 
+- /docs/data-fetching.md
+- /docs/data-mutations.md
+- /docs/auth.md
+- /docs/server-components.md
+- /docs/routing.md
