@@ -22,3 +22,10 @@ This is a **Next.js App Router** project (Next.js 16, React 19, TypeScript, Tail
 - Geist fonts (sans and mono) are loaded via `next/font` in the root layout and exposed as CSS variables.
 
 All components default to React Server Components unless `"use client"` is declared at the top of the file.
+
+## CODE GENERATION RULES
+
+**IMPORTANT:** Before generating any code, always check the `/docs` directory for relevant documentation files. If a docs file exists for the feature or area you are working on, you MUST read and follow it before writing any code. The `/docs` directory contains project-specific requirements, conventions, and design decisions that take precedence over general best practices.
+
+- /docs/ui.md
+- /docs/data-fetching.md 
