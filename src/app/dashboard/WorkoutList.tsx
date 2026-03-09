@@ -84,7 +84,7 @@ export default function WorkoutList({ workouts, selectedDate }: Props) {
                             {workout.name ?? "Unnamed Workout"}
                           </p>
                           <span className="text-xs text-muted-foreground">
-                            {format(workout.startedAt, "hh:mm a 'UTC'", { timeZone: "UTC" })}
+                            {format(new Date(workout.startedAt.toISOString().replace("Z", "")), "hh:mm a")} UTC
                           </span>
                         </div>
                         <p className="text-sm text-muted-foreground mt-1">

@@ -31,3 +31,5 @@ All components default to React Server Components unless `"use client"` is decla
 - /docs/data-fetching.md
 - /docs/data-mutations.md
 - /docs/auth.md
+- /docs/server-components.md
+- /docs/routing.md
