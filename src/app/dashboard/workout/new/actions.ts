@@ -16,17 +16,17 @@ const exerciseSchema = z.object({
   sets: z.array(setSchema).min(1),
 });
 
-const logWorkoutSchema = z.object({
+const createWorkoutSchema = z.object({
   name: z.string().min(1).max(100),
   startedAt: z.coerce.date(),
   completedAt: z.coerce.date(),
   exercises: z.array(exerciseSchema).min(1),
 });
 
-type LogWorkoutInput = z.infer<typeof logWorkoutSchema>;
+export type CreateWorkoutInput = z.infer<typeof createWorkoutSchema>;
 
-export async function logWorkout(input: LogWorkoutInput) {
-  const parsed = logWorkoutSchema.safeParse(input);
+export async function createWorkoutAction(input: CreateWorkoutInput) {
+  const parsed = createWorkoutSchema.safeParse(input);
   if (!parsed.success) throw new Error("Invalid input");
 
   const { userId } = await auth();
