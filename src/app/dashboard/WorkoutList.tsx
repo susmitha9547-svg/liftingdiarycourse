@@ -4,13 +4,11 @@ import { useState } from "react";
 import { format } from "date-fns";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { CalendarIcon, Plus } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import dynamic from "next/dynamic";
-
-const LogWorkoutDialog = dynamic(() => import("./LogWorkoutDialog"), {
-  ssr: false,
-});
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 type Workout = {
   id: string;
@@ -27,44 +25,55 @@ type Props = {
 export default function WorkoutList({ workouts, selectedDate }: Props) {
   const router = useRouter();
   const [date, setDate] = useState<Date>(selectedDate);
+  const [open, setOpen] = useState(false);
 
   function handleDateChange(d: Date | undefined) {
     if (!d) return;
     setDate(d);
+    setOpen(false);
     const iso = format(d, "yyyy-MM-dd");
     router.push(`/dashboard?date=${iso}`);
     router.refresh();
   }
 
   return (
-    <div className="flex flex-col md:flex-row gap-6 items-start">
-      <Card>
-        <CardHeader>
-          <CardTitle>Select Date</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Calendar
-            mode="single"
-            selected={date}
-            onSelect={handleDateChange}
-          />
-        </CardContent>
-      </Card>
+    <div className="flex flex-col gap-4">
+      <div className="flex items-center justify-between">
+        <span className="text-sm font-medium">Workouts for {format(date, "do MMM yyyy")}</span>
+        <div className="flex items-center gap-2">
+          <Link href="/dashboard/workout/new">
+            <Button variant="outline">
+              <Plus className="h-4 w-4" />
+              Log New Workout
+            </Button>
+          </Link>
+          <Popover open={open} onOpenChange={setOpen}>
+            <PopoverTrigger asChild>
+              <Button variant="outline" className="whitespace-nowrap">
+                <CalendarIcon className="h-4 w-4" />
+                {format(date, "do MMM yyyy")}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="end">
+              <Calendar
+                mode="single"
+                selected={date}
+                onSelect={handleDateChange}
+              />
+            </PopoverContent>
+          </Popover>
+        </div>
+      </div>
 
       <Card className="flex-1">
-        <CardHeader>
-          <CardTitle>Workouts for {format(date, "do MMM yyyy")}</CardTitle>
-        </CardHeader>
-        <CardContent>
+        <CardContent className="pt-6">
           {workouts.length === 0 ? (
             <div className="space-y-3">
               <p className="text-muted-foreground text-sm">
                 No workouts logged for this date.
               </p>
-              <LogWorkoutDialog selectedDate={date} />
             </div>
           ) : (
-            <>
             <ul className="space-y-3">
               {workouts.map((workout) => {
                 const duration =
@@ -99,11 +108,10 @@ export default function WorkoutList({ workouts, selectedDate }: Props) {
                 );
               })}
             </ul>
-            <LogWorkoutDialog selectedDate={date} />
-            </>
           )}
         </CardContent>
       </Card>
+
     </div>
   );
 }
