@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { format } from "date-fns";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import dynamic from "next/dynamic";
@@ -77,21 +78,23 @@ export default function WorkoutList({ workouts, selectedDate }: Props) {
 
                 return (
                   <li key={workout.id}>
-                    <Card>
-                      <CardContent className="pt-4 pb-4">
-                        <div className="flex items-center justify-between">
-                          <p className="font-semibold">
-                            {workout.name ?? "Unnamed Workout"}
+                    <Link href={`/dashboard/workout/${workout.id}`}>
+                      <Card className="hover:bg-muted/50 transition-colors cursor-pointer">
+                        <CardContent className="pt-4 pb-4">
+                          <div className="flex items-center justify-between">
+                            <p className="font-semibold">
+                              {workout.name ?? "Unnamed Workout"}
+                            </p>
+                            <span className="text-xs text-muted-foreground">
+                              {format(new Date(workout.startedAt.toISOString().replace("Z", "")), "hh:mm a")} UTC
+                            </span>
+                          </div>
+                          <p className="text-sm text-muted-foreground mt-1">
+                            Duration: {duration}
                           </p>
-                          <span className="text-xs text-muted-foreground">
-                            {format(new Date(workout.startedAt.toISOString().replace("Z", "")), "hh:mm a")} UTC
-                          </span>
-                        </div>
-                        <p className="text-sm text-muted-foreground mt-1">
-                          Duration: {duration}
-                        </p>
-                      </CardContent>
-                    </Card>
+                        </CardContent>
+                      </Card>
+                    </Link>
                   </li>
                 );
               })}
