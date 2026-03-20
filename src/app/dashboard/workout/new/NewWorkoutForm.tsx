@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm, useFieldArray, UseFormReturn } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,6 +17,32 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+const COMMON_EXERCISES = [
+  "Barbell Row",
+  "Bench Press",
+  "Bicep Curls",
+  "Deadlift",
+  "Dips",
+  "Front Squat",
+  "Incline Bench Press",
+  "Lateral Raises",
+  "Leg Press",
+  "Lunges",
+  "Overhead Press",
+  "Pull-ups",
+  "Romanian Deadlift",
+  "Squat",
+  "Tricep Extensions",
+  "Tricep Pushdown",
+];
 import { createWorkoutAction } from "./actions";
 
 const setSchema = z.object({
@@ -51,9 +77,11 @@ export default function NewWorkoutForm() {
   });
 
   useEffect(() => {
-    const today = new Date().toISOString().slice(0, 10);
-    form.setValue("startedAt", `${today}T07:00`);
-    form.setValue("completedAt", `${today}T08:00`);
+    const now = new Date();
+    const pad = (n: number) => String(n).padStart(2, "0");
+    const localDate = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+    form.setValue("startedAt", `${localDate}T07:00`);
+    form.setValue("completedAt", `${localDate}T08:00`);
   }, []);
 
   const {
@@ -182,6 +210,11 @@ function ExerciseFields({
   onRemove: () => void;
   canRemove: boolean;
 }) {
+  const currentName = form.watch(`exercises.${exIndex}.name`);
+  const [isCustom, setIsCustom] = useState(
+    () => !!currentName && !COMMON_EXERCISES.includes(currentName)
+  );
+
   const {
     fields: setFields,
     append: appendSet,
@@ -200,9 +233,51 @@ function ExerciseFields({
             name={`exercises.${exIndex}.name`}
             render={({ field }) => (
               <FormItem className="flex-1">
-                <FormControl>
-                  <Input placeholder="Exercise name (e.g. Bench Press)" {...field} />
-                </FormControl>
+                {isCustom ? (
+                  <div className="flex gap-2">
+                    <FormControl>
+                      <Input placeholder="Enter exercise name" {...field} />
+                    </FormControl>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="shrink-0"
+                      onClick={() => {
+                        setIsCustom(false);
+                        field.onChange("");
+                      }}
+                    >
+                      Back
+                    </Button>
+                  </div>
+                ) : (
+                  <Select
+                    onValueChange={(val) => {
+                      if (val === "__custom__") {
+                        setIsCustom(true);
+                        field.onChange("");
+                      } else {
+                        field.onChange(val);
+                      }
+                    }}
+                    value={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select an exercise" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {COMMON_EXERCISES.map((name) => (
+                        <SelectItem key={name} value={name}>
+                          {name}
+                        </SelectItem>
+                      ))}
+                      <SelectItem value="__custom__">Custom...</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
                 <FormMessage />
               </FormItem>
             )}

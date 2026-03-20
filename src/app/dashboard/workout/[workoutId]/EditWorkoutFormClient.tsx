@@ -2,6 +2,6 @@
 
 import dynamic from "next/dynamic";
 
-const EditWorkoutForm = dynamic(() => import("./EditWorkoutForm"), { ssr: false });
+const WorkoutLogger = dynamic(() => import("./EditWorkoutForm"), { ssr: false });
 
-export default EditWorkoutForm;
+export default WorkoutLogger;

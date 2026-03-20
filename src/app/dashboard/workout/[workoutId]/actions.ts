@@ -21,7 +21,7 @@ const updateWorkoutSchema = z.object({
   name: z.string().min(1).max(100),
   startedAt: z.coerce.date(),
   completedAt: z.coerce.date(),
-  exercises: z.array(exerciseSchema).min(1),
+  exercises: z.array(exerciseSchema),
 });
 
 export type UpdateWorkoutInput = z.infer<typeof updateWorkoutSchema>;

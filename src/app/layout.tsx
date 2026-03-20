@@ -10,7 +10,7 @@ import {
 } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import { ThemeProvider } from "@/components/theme-provider";
-import { ThemeSwitcher } from "@/components/theme-switcher";
+import { ThemeSwitcherClient as ThemeSwitcher } from "@/components/theme-switcher-client";
 import "./globals.css";
 
 const geistSans = Geist({
