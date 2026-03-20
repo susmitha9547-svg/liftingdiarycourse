@@ -17,8 +17,8 @@ const exerciseSchema = z.object({
 });
 
 const updateWorkoutSchema = z.object({
-  workoutId: z.string().uuid(),
-  name: z.string().min(1).max(100),
+  workoutId: z.string().min(1),
+  name: z.string().max(100),
   startedAt: z.coerce.date(),
   completedAt: z.coerce.date(),
   exercises: z.array(exerciseSchema),
